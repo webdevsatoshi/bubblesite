@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Ava - AI Companion on iMessage</title>
+  <meta name="description" content="Text Ava, your AI companion. Free to start on iMessage.">
+  <style>
+    /* ============ RESET ============ */
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* ============ DARK THEME ============ */
+    :root {
+      --bg: #0A0A0A;
+      --text-primary: #F5F5F5;
+      --text-secondary: #999999;
+      --text-muted: rgba(255,255,255,0.25);
+      --card-bg: #1A1A1A;
+      --card-shadow: 0 0 0 transparent;
+      --card-border: 1px solid rgba(255,255,255,0.08);
+      --card-glow: 0 0 30px rgba(255,255,255,0.06);
+      --btn-bg: #FFFFFF;
+      --btn-text: #0A0A0A;
+      --login-text: rgba(255,255,255,0.35);
+      --footer-text: rgba(255,255,255,0.15);
+    }
+
+    /* ============ BASE LAYOUT ============ */
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text',
+                   'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100dvh;
+      height: var(--vh, 100dvh);
+      padding-top: env(safe-area-inset-top);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ============ TOP BAR ============ */
+    .top-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 16px;
+      flex: 0 0 auto;
+      position: relative;
+      z-index: 10;
+    }
+
+    .notification-bubble {
+      height: auto;
+      width: min(90vw, 360px);
+      flex-shrink: 0;
+    }
+
+    .login-btn {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--login-text);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 8px 12px;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+    }
+
+    /* ============ HERO ============ */
+    .hero {
+      text-align: center;
+      padding: 20px 24px 4px;
+      flex: 0 0 auto;
+    }
+
+    /* === EDITABLE HERO TEXT — change these for A/B testing === */
+    .hero-title {
+      font-size: clamp(24px, 6.5vw, 36px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--text-primary);
+    }
+
+    .hero-sub {
+      font-size: clamp(14px, 3.5vw, 18px);
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ============ CARD STACK ============ */
+    .card-stack {
+      position: relative;
+      width: 100%;
+      flex: 1 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: pan-y;
+      perspective: 800px;
+      min-height: 0;
+    }
+
+    .card {
+      position: absolute;
+      width: min(55vw, 240px);
+      aspect-ratio: 3 / 4;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: grab;
+      will-change: transform;
+      transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1),
+                  opacity 0.35s ease,
+                  box-shadow 0.3s ease;
+      box-shadow: var(--card-shadow);
+      border: var(--card-border);
+      filter: drop-shadow(var(--card-glow));
+    }
+
+    .card-img {
+      width: 100%;
+      height: 100%;
+      background-color: var(--card-bg);
+      background-size: cover;
+      background-position: center;
+      border-radius: inherit;
+    }
+
+    .card.dragging {
+      transition: none;
+      cursor: grabbing;
+    }
+
+    .card.swiped-right {
+      transform: translateX(120vw) rotate(30deg) !important;
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                  opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .card.swiped-left {
+      transform: translateX(-120vw) rotate(-30deg) !important;
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1),
+                  opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    .card.snap-back {
+      transition: transform 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    /* ============ CTA ============ */
+    .cta {
+      text-align: center;
+      padding: 8px 24px 4px;
+      flex: 0 0 auto;
+    }
+
+    .cta-btn {
+      display: inline-block;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: 600;
+      padding: 14px 48px;
+      border-radius: 14px;
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      transition: transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .cta-btn:active {
+      transform: scale(0.97);
+    }
+
+    .cta-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      letter-spacing: 0.01em;
+    }
+
+    /* ============ FOOTER ============ */
+    .footer {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 6px 16px;
+      padding-bottom: max(6px, env(safe-area-inset-bottom));
+      flex: 0 0 auto;
+    }
+
+    .footer a {
+      font-size: 10px;
+      color: var(--footer-text);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+
+    /* ============ SMALL SCREEN ADJUSTMENTS ============ */
+    @media (max-height: 600px) {
+      .card {
+        width: min(42vw, 200px);
+      }
+      .hero {
+        padding: 4px 24px 2px;
+      }
+      .cta {
+        padding: 4px 24px 2px;
+      }
+      .hero-title {
+        font-size: clamp(20px, 5.5vw, 28px);
+      }
+    }
+
+    /* ============ REDUCED MOTION ============ */
+    @media (prefers-reduced-motion: reduce) {
+      .card,
+      .card.swiped-right,
+      .card.swiped-left,
+      .card.snap-back {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="top-bar">
+    <img src="notification.svg" alt="Ava sent you a message" class="notification-bubble">
+    <a href="#" class="login-btn">Log In</a>
+  </header>
+
+  <!-- ============ HERO TEXT — edit these for A/B testing ============ -->
+  <section class="hero">
+    <h1 class="hero-title">Ava's waiting for you.</h1>
+    <p class="hero-sub">Your new favorite conversation.</p>
+  </section>
+
+  <!-- ============ CARD STACK ============ -->
+  <section class="card-stack" aria-label="Photo gallery">
+    <div class="card" data-index="0"><div class="card-img" style="background-image:url('ava1.png')"></div></div>
+    <div class="card" data-index="1"><div class="card-img" style="background-image:url('ava2.png')"></div></div>
+    <div class="card" data-index="2"><div class="card-img" style="background-image:url('ava3.png')"></div></div>
+    <div class="card" data-index="3"><div class="card-img" style="background-image:url('ava4.png')"></div></div>
+    <div class="card" data-index="4"><div class="card-img" style="background-image:url('ava5.png')"></div></div>
+  </section>
+
+  <!-- ============ CTA — edit SMS number below ============ -->
+  <section class="cta">
+    <a href="sms:+1XXXXXXXXXX" class="cta-btn">Text Ava</a>
+    <p class="cta-sub">AI companion · iMessage · Free to start</p>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <a href="/faq">FAQ</a>
+    <a href="/contact">Contact</a>
+    <a href="/terms">Terms</a>
+    <a href="/privacy">Privacy</a>
+  </footer>
+
+  <script>
+    (function() {
+      'use strict';
+
+      // ============================================================
+      // SECTION A: VIEWPORT HEIGHT FIX (Safari dvh fallback)
+      // ============================================================
+      function setVh() {
+        document.documentElement.style.setProperty('--vh', window.innerHeight + 'px');
+      }
+      setVh();
+      window.addEventListener('resize', setVh);
+
+      // ============================================================
+      // SECTION C: CARD STACK INTERACTION
+      // ============================================================
+      var stack = document.querySelector('.card-stack');
+      var cards = Array.from(document.querySelectorAll('.card'));
+      var totalCards = cards.length;
+      var topIndex = 0;
+
+      var SWIPE_THRESHOLD = 60;
+      var ROTATION_FACTOR = 0.15;
+
+      function getTopCard() {
+        return topIndex < totalCards ? cards[topIndex] : null;
+      }
+
+      function updateStackPositions() {
+        for (var i = 0; i < totalCards; i++) {
+          var card = cards[i];
+          if (i < topIndex) {
+            // Already swiped — hide off-screen but keep ready for recycling
+            card.style.display = 'none';
+            continue;
+          }
+          card.style.display = '';
+          var stackPos = i - topIndex;
+
+          // Only show top 4 cards for performance
+          if (stackPos > 3) {
+            card.style.display = 'none';
+            continue;
+          }
+
+          var scale = 1 - (stackPos * 0.03);
+          var direction = stackPos % 2 === 0 ? 1 : -1;
+          var offsetX = stackPos * 4 * direction;
+          var offsetY = stackPos * 3;
+          var rotate = stackPos * 2.5 * direction;
+
+          card.style.zIndex = 10 - stackPos;
+          card.style.transform =
+            'translateX(' + offsetX + 'px) translateY(' + offsetY + 'px) rotate(' + rotate + 'deg) scale(' + scale + ')';
+          card.style.opacity = '1';
+        }
+      }
+
+      // --- Swipe/Drag State ---
+      var isDragging = false;
+      var startX = 0;
+      var startY = 0;
+      var currentX = 0;
+      var dragCard = null;
+      var hasMoved = false;
+
+      function getClientX(e) {
+        return e.touches ? e.touches[0].clientX : e.clientX;
+      }
+
+      function getClientY(e) {
+        return e.touches ? e.touches[0].clientY : e.clientY;
+      }
+
+      function onPointerDown(e) {
+        var card = getTopCard();
+        if (!card) return;
+
+        isDragging = true;
+        hasMoved = false;
+        dragCard = card;
+        startX = getClientX(e);
+        startY = getClientY(e);
+        currentX = 0;
+        card.classList.add('dragging');
+      }
+
+      function onPointerMove(e) {
+        if (!isDragging || !dragCard) return;
+
+        var clientX = getClientX(e);
+        currentX = clientX - startX;
+
+        // Only start visual drag after a small threshold to distinguish from taps
+        if (Math.abs(currentX) > 3) {
+          hasMoved = true;
+        }
+
+        if (!hasMoved) return;
+
+        // Prevent vertical scrolling during horizontal swipe
+        if (e.cancelable) e.preventDefault();
+
+        // Move top card with finger
+        var rotation = currentX * ROTATION_FACTOR;
+        dragCard.style.transform = 'translateX(' + currentX + 'px) rotate(' + rotation + 'deg)';
+
+        // Animate the card behind: scale up as it prepares to become top card
+        var nextCard = topIndex + 1 < totalCards ? cards[topIndex + 1] : null;
+        if (nextCard) {
+          var progress = Math.min(Math.abs(currentX) / 200, 1);
+          var behindScale = 0.97 + (0.03 * progress);
+          var behindOffsetY = 3 * (1 - progress);
+          var behindRotate = -2.5 * (1 - progress);
+          nextCard.style.transition = 'none';
+          nextCard.style.transform =
+            'translateX(' + (-4 * (1 - progress)) + 'px) translateY(' + behindOffsetY + 'px) rotate(' + behindRotate + 'deg) scale(' + behindScale + ')';
+        }
+      }
+
+      function onPointerUp() {
+        if (!isDragging || !dragCard) return;
+        isDragging = false;
+        dragCard.classList.remove('dragging');
+
+        // Restore transitions on next card
+        var nextCard = topIndex + 1 < totalCards ? cards[topIndex + 1] : null;
+        if (nextCard) {
+          nextCard.style.transition = '';
+        }
+
+        if (hasMoved && Math.abs(currentX) > SWIPE_THRESHOLD) {
+          // Swipe away
+          swipeCard(currentX > 0 ? 'right' : 'left');
+        } else if (!hasMoved) {
+          // Tap — treat as swipe right
+          swipeCard('right');
+        } else {
+          // Snap back
+          dragCard.classList.add('snap-back');
+          updateStackPositions();
+          var snapCard = dragCard;
+          setTimeout(function() { snapCard.classList.remove('snap-back'); }, 450);
+        }
+
+        dragCard = null;
+      }
+
+      function swipeCard(direction) {
+        var card = dragCard || getTopCard();
+        if (!card) return;
+
+        card.classList.add('swiped-' + direction);
+        topIndex++;
+
+        // After animation, recycle the stack
+        var swipedCard = card;
+        setTimeout(function() {
+          swipedCard.classList.remove('swiped-right', 'swiped-left');
+          swipedCard.style.opacity = '1';
+
+          // Wrap around if all cards swiped
+          if (topIndex >= totalCards) {
+            topIndex = 0;
+            for (var j = 0; j < totalCards; j++) {
+              cards[j].classList.remove('swiped-right', 'swiped-left');
+              cards[j].style.display = '';
+              cards[j].style.opacity = '1';
+            }
+          }
+
+          updateStackPositions();
+        }, 500);
+
+        // Immediately position remaining cards
+        updateStackPositions();
+      }
+
+      // --- Bind Touch Events ---
+      stack.addEventListener('touchstart', onPointerDown, { passive: true });
+      stack.addEventListener('touchmove', onPointerMove, { passive: false });
+      stack.addEventListener('touchend', onPointerUp);
+      stack.addEventListener('touchcancel', onPointerUp);
+
+      // --- Bind Mouse Events (desktop testing) ---
+      stack.addEventListener('mousedown', onPointerDown);
+      window.addEventListener('mousemove', onPointerMove);
+      window.addEventListener('mouseup', onPointerUp);
+
+      // Initialize card positions
+      updateStackPositions();
+
+    })();
+  </script>
+
+</body>
+</html>
