@@ -88,13 +88,15 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       min-height: 0;
     }
 
     /* ============ HERO ============ */
     .hero {
       text-align: center;
-      padding: 10px 24px 0;
+      padding: 0 24px;
+      margin-bottom: 12px;
       flex: 0 0 auto;
     }
 
@@ -128,7 +130,7 @@
       touch-action: pan-y;
       perspective: 800px;
       min-height: 0;
-      margin: 6px 0;
+      margin: 0;
     }
 
     .card {
@@ -185,6 +187,7 @@
     .cta {
       text-align: center;
       padding: 0 24px;
+      margin-top: 12px;
       flex: 0 0 auto;
     }
 
@@ -249,13 +252,13 @@
         width: min(42vw, 200px);
       }
       .hero {
-        padding: 4px 24px 0;
+        margin-bottom: 6px;
+      }
+      .cta {
+        margin-top: 6px;
       }
       .hero-title {
         font-size: clamp(20px, 5.5vw, 28px);
-      }
-      .card-stack {
-        margin: 2px 0;
       }
     }
 
