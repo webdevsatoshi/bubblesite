@@ -93,7 +93,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 24px;
       min-height: 0;
     }
 
@@ -409,11 +409,11 @@
           }
 
           card.style.display = '';
-          var scale = 1 - (slot * 0.03);
+          var scale = 1 - (slot * 0.04);
           var direction = slot % 2 === 0 ? 1 : -1;
-          var offsetX = slot * 4 * direction;
-          var offsetY = slot * 3;
-          var rotate = slot * 2.5 * direction;
+          var offsetX = slot * 12 * direction;
+          var offsetY = slot * 6;
+          var rotate = slot * 4 * direction;
 
           card.style.zIndex = 10 - slot;
           card.style.transform =
@@ -513,12 +513,12 @@
         var nextCard = order.length > 1 ? cards[order[1]] : null;
         if (nextCard) {
           var progress = Math.min(Math.abs(currentX) / 200, 1);
-          var behindScale = 0.97 + (0.03 * progress);
-          var behindOffsetY = 3 * (1 - progress);
-          var behindRotate = -2.5 * (1 - progress);
+          var behindScale = 0.96 + (0.04 * progress);
+          var behindOffsetY = 6 * (1 - progress);
+          var behindRotate = -4 * (1 - progress);
           nextCard.style.transition = 'none';
           nextCard.style.transform =
-            'translateX(' + (-4 * (1 - progress)) + 'px) translateY(' + behindOffsetY + 'px) rotate(' + behindRotate + 'deg) scale(' + behindScale + ')';
+            'translateX(' + (-12 * (1 - progress)) + 'px) translateY(' + behindOffsetY + 'px) rotate(' + behindRotate + 'deg) scale(' + behindScale + ')';
         }
       }
 
