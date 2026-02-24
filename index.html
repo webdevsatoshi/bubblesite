@@ -70,31 +70,21 @@
 
     .notification-bubble {
       height: auto;
-      width: min(90vw, 360px);
+      width: min(95vw, 450px);
       flex-shrink: 0;
     }
 
     .login-btn {
-      position: fixed;
-      left: 16px;
-      bottom: max(8px, env(safe-area-inset-bottom));
-      background: none;
-      border: none;
-      color: var(--login-text);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      padding: 8px 12px;
-      letter-spacing: 0.01em;
+      font-size: 10px;
+      color: var(--footer-text);
       text-decoration: none;
-      z-index: 100;
+      letter-spacing: 0.02em;
     }
 
     /* ============ HERO ============ */
     .hero {
       text-align: center;
-      padding: 20px 24px 4px;
+      padding: 32px 24px 4px;
       flex: 0 0 auto;
     }
 
@@ -105,6 +95,7 @@
       letter-spacing: -0.02em;
       line-height: 1.15;
       color: var(--text-primary);
+      text-shadow: 0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(255,255,255,0.05);
     }
 
     .hero-sub {
@@ -113,6 +104,7 @@
       color: var(--text-secondary);
       margin-top: 4px;
       letter-spacing: -0.01em;
+      text-shadow: 0 0 30px rgba(255,255,255,0.08);
     }
 
     /* ============ CARD STACK ============ */
@@ -181,7 +173,8 @@
     /* ============ CTA ============ */
     .cta {
       text-align: center;
-      padding: 8px 24px 4px;
+      padding: 0 24px 4px;
+      margin-top: -8px;
       flex: 0 0 auto;
     }
 
@@ -224,7 +217,7 @@
     .footer {
       width: 100%;
       display: flex;
-      justify-content: flex-end;
+      justify-content: center;
       gap: 12px;
       padding: 6px 16px;
       padding-bottom: max(6px, env(safe-area-inset-bottom));
@@ -273,9 +266,6 @@
     <img src="notification.svg" alt="Ava sent you a message" class="notification-bubble">
   </header>
 
-  <!-- ============ LOGIN (bottom-left) ============ -->
-  <a href="#" class="login-btn">Log In</a>
-
   <!-- ============ HERO TEXT — edit these for A/B testing ============ -->
   <section class="hero">
     <h1 class="hero-title">Ava's waiting for you.</h1>
@@ -299,6 +289,7 @@
 
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
+    <a href="#" class="login-btn">Log In</a>
     <a href="/faq">FAQ</a>
     <a href="/contact">Contact</a>
     <a href="/terms">Terms</a>
