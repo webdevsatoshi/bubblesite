@@ -4,3 +4,10 @@ Thumbs.db
 ava*.png
 notification.svg
 spicy_notification.svg
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
