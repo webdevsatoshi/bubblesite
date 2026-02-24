@@ -75,10 +75,9 @@
     }
 
     .login-btn {
-      position: absolute;
-      right: 16px;
-      top: 50%;
-      transform: translateY(-50%);
+      position: fixed;
+      left: 16px;
+      bottom: max(8px, env(safe-area-inset-bottom));
       background: none;
       border: none;
       color: var(--login-text);
@@ -89,6 +88,7 @@
       padding: 8px 12px;
       letter-spacing: 0.01em;
       text-decoration: none;
+      z-index: 100;
     }
 
     /* ============ HERO ============ */
@@ -186,7 +186,9 @@
     }
 
     .cta-btn {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       background: var(--btn-bg);
       color: var(--btn-text);
       font-family: inherit;
@@ -198,6 +200,13 @@
       letter-spacing: -0.01em;
       transition: transform 0.15s;
       -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 0 20px rgba(255,255,255,0.3), 0 0 60px rgba(255,255,255,0.1);
+    }
+
+    .cta-btn svg {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
     }
 
     .cta-btn:active {
@@ -262,8 +271,10 @@
   <!-- ============ TOP BAR ============ -->
   <header class="top-bar">
     <img src="notification.svg" alt="Ava sent you a message" class="notification-bubble">
-    <a href="#" class="login-btn">Log In</a>
   </header>
+
+  <!-- ============ LOGIN (bottom-left) ============ -->
+  <a href="#" class="login-btn">Log In</a>
 
   <!-- ============ HERO TEXT — edit these for A/B testing ============ -->
   <section class="hero">
@@ -282,7 +293,7 @@
 
   <!-- ============ CTA — edit SMS number below ============ -->
   <section class="cta">
-    <a href="sms:+1XXXXXXXXXX" class="cta-btn">Text Ava</a>
+    <a href="sms:+1XXXXXXXXXX" class="cta-btn"><svg viewBox="0 0 66.15 66.15" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ig" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#0cbd2a"/><stop offset="1" stop-color="#5bf675"/></linearGradient></defs><rect rx="14.57" width="66.15" height="66.15" fill="url(#ig)"/><path d="M33.07 11.45a24.28 20.22 0 0 0-24.28 20.22 24.28 20.22 0 0 0 11.8 17.32 27.37 20.22 0 0 1-4.25 5.94 23.86 20.22 0 0 0 9.86-3.87 24.28 20.22 0 0 0 6.87.84 24.28 20.22 0 0 0 24.28-20.22 24.28 20.22 0 0 0-24.28-20.22z" fill="#fff"/></svg> Text Ava</a>
     <p class="cta-sub">AI companion · iMessage · Free to start</p>
   </section>
 
@@ -313,39 +324,36 @@
       var stack = document.querySelector('.card-stack');
       var cards = Array.from(document.querySelectorAll('.card'));
       var totalCards = cards.length;
-      var topIndex = 0;
 
       var SWIPE_THRESHOLD = 60;
       var ROTATION_FACTOR = 0.15;
 
+      // Circular queue: order[0] is top card, order[length-1] is bottom
+      var order = [];
+      for (var k = 0; k < totalCards; k++) order.push(k);
+
       function getTopCard() {
-        return topIndex < totalCards ? cards[topIndex] : null;
+        return cards[order[0]];
       }
 
       function updateStackPositions() {
-        for (var i = 0; i < totalCards; i++) {
-          var card = cards[i];
-          if (i < topIndex) {
-            // Already swiped — hide off-screen but keep ready for recycling
-            card.style.display = 'none';
-            continue;
-          }
-          card.style.display = '';
-          var stackPos = i - topIndex;
+        for (var i = 0; i < order.length; i++) {
+          var card = cards[order[i]];
 
           // Only show top 4 cards for performance
-          if (stackPos > 3) {
+          if (i > 3) {
             card.style.display = 'none';
             continue;
           }
 
-          var scale = 1 - (stackPos * 0.03);
-          var direction = stackPos % 2 === 0 ? 1 : -1;
-          var offsetX = stackPos * 4 * direction;
-          var offsetY = stackPos * 3;
-          var rotate = stackPos * 2.5 * direction;
+          card.style.display = '';
+          var scale = 1 - (i * 0.03);
+          var direction = i % 2 === 0 ? 1 : -1;
+          var offsetX = i * 4 * direction;
+          var offsetY = i * 3;
+          var rotate = i * 2.5 * direction;
 
-          card.style.zIndex = 10 - stackPos;
+          card.style.zIndex = 10 - i;
           card.style.transform =
             'translateX(' + offsetX + 'px) translateY(' + offsetY + 'px) rotate(' + rotate + 'deg) scale(' + scale + ')';
           card.style.opacity = '1';
@@ -402,7 +410,7 @@
         dragCard.style.transform = 'translateX(' + currentX + 'px) rotate(' + rotation + 'deg)';
 
         // Animate the card behind: scale up as it prepares to become top card
-        var nextCard = topIndex + 1 < totalCards ? cards[topIndex + 1] : null;
+        var nextCard = order.length > 1 ? cards[order[1]] : null;
         if (nextCard) {
           var progress = Math.min(Math.abs(currentX) / 200, 1);
           var behindScale = 0.97 + (0.03 * progress);
@@ -420,7 +428,7 @@
         dragCard.classList.remove('dragging');
 
         // Restore transitions on next card
-        var nextCard = topIndex + 1 < totalCards ? cards[topIndex + 1] : null;
+        var nextCard = order.length > 1 ? cards[order[1]] : null;
         if (nextCard) {
           nextCard.style.transition = '';
         }
@@ -447,29 +455,28 @@
         if (!card) return;
 
         card.classList.add('swiped-' + direction);
-        topIndex++;
 
-        // After animation, recycle the stack
+        // Move swiped card from front to back of order
+        var swipedIdx = order.shift();
+        order.push(swipedIdx);
+
+        // Immediately reposition remaining visible cards
+        updateStackPositions();
+
+        // After fly-out animation ends, reset the swiped card silently
         var swipedCard = card;
         setTimeout(function() {
           swipedCard.classList.remove('swiped-right', 'swiped-left');
-          swipedCard.style.opacity = '1';
-
-          // Wrap around if all cards swiped
-          if (topIndex >= totalCards) {
-            topIndex = 0;
-            for (var j = 0; j < totalCards; j++) {
-              cards[j].classList.remove('swiped-right', 'swiped-left');
-              cards[j].style.display = '';
-              cards[j].style.opacity = '1';
-            }
-          }
-
+          // Briefly hide transition so it doesn't animate back into position
+          swipedCard.style.transition = 'none';
           updateStackPositions();
+          // Re-enable transitions on next frame
+          requestAnimationFrame(function() {
+            requestAnimationFrame(function() {
+              swipedCard.style.transition = '';
+            });
+          });
         }, 500);
-
-        // Immediately position remaining cards
-        updateStackPositions();
       }
 
       // --- Bind Touch Events ---
