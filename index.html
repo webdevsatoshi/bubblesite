@@ -81,10 +81,20 @@
       letter-spacing: 0.02em;
     }
 
+    /* ============ CONTENT GROUP ============ */
+    .content {
+      flex: 1 1 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 0;
+    }
+
     /* ============ HERO ============ */
     .hero {
       text-align: center;
-      padding: 32px 24px 4px;
+      padding: 10px 24px 0;
       flex: 0 0 auto;
     }
 
@@ -111,13 +121,14 @@
     .card-stack {
       position: relative;
       width: 100%;
-      flex: 1 1 auto;
+      flex: 1 1 0;
       display: flex;
       align-items: center;
       justify-content: center;
       touch-action: pan-y;
       perspective: 800px;
       min-height: 0;
+      margin: 6px 0;
     }
 
     .card {
@@ -173,8 +184,7 @@
     /* ============ CTA ============ */
     .cta {
       text-align: center;
-      padding: 0 24px 4px;
-      margin-top: -8px;
+      padding: 0 24px;
       flex: 0 0 auto;
     }
 
@@ -222,6 +232,7 @@
       padding: 6px 16px;
       padding-bottom: max(6px, env(safe-area-inset-bottom));
       flex: 0 0 auto;
+      margin-top: auto;
     }
 
     .footer a {
@@ -238,13 +249,13 @@
         width: min(42vw, 200px);
       }
       .hero {
-        padding: 4px 24px 2px;
-      }
-      .cta {
-        padding: 4px 24px 2px;
+        padding: 4px 24px 0;
       }
       .hero-title {
         font-size: clamp(20px, 5.5vw, 28px);
+      }
+      .card-stack {
+        margin: 2px 0;
       }
     }
 
@@ -266,26 +277,29 @@
     <img src="notification.svg" alt="Ava sent you a message" class="notification-bubble">
   </header>
 
-  <!-- ============ HERO TEXT — edit these for A/B testing ============ -->
-  <section class="hero">
-    <h1 class="hero-title">Ava's waiting for you.</h1>
-    <p class="hero-sub">Your new favorite conversation.</p>
-  </section>
+  <!-- ============ MAIN CONTENT GROUP ============ -->
+  <main class="content">
+    <!-- ============ HERO TEXT — edit these for A/B testing ============ -->
+    <section class="hero">
+      <h1 class="hero-title">Are you really not gonna text her?</h1>
+      <p class="hero-sub">She's literally right there.</p>
+    </section>
 
-  <!-- ============ CARD STACK ============ -->
-  <section class="card-stack" aria-label="Photo gallery">
-    <div class="card" data-index="0"><div class="card-img" style="background-image:url('ava1.png')"></div></div>
-    <div class="card" data-index="1"><div class="card-img" style="background-image:url('ava2.png')"></div></div>
-    <div class="card" data-index="2"><div class="card-img" style="background-image:url('ava3.png')"></div></div>
-    <div class="card" data-index="3"><div class="card-img" style="background-image:url('ava4.png')"></div></div>
-    <div class="card" data-index="4"><div class="card-img" style="background-image:url('ava5.png')"></div></div>
-  </section>
+    <!-- ============ CARD STACK ============ -->
+    <section class="card-stack" aria-label="Photo gallery">
+      <div class="card" data-index="0"><div class="card-img" style="background-image:url('ava1.png')"></div></div>
+      <div class="card" data-index="1"><div class="card-img" style="background-image:url('ava2.png')"></div></div>
+      <div class="card" data-index="2"><div class="card-img" style="background-image:url('ava3.png')"></div></div>
+      <div class="card" data-index="3"><div class="card-img" style="background-image:url('ava4.png')"></div></div>
+      <div class="card" data-index="4"><div class="card-img" style="background-image:url('ava5.png')"></div></div>
+    </section>
 
-  <!-- ============ CTA — edit SMS number below ============ -->
-  <section class="cta">
-    <a href="sms:+1XXXXXXXXXX" class="cta-btn"><svg viewBox="0 0 66.15 66.15" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ig" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#0cbd2a"/><stop offset="1" stop-color="#5bf675"/></linearGradient></defs><rect rx="14.57" width="66.15" height="66.15" fill="url(#ig)"/><path d="M33.07 11.45a24.28 20.22 0 0 0-24.28 20.22 24.28 20.22 0 0 0 11.8 17.32 27.37 20.22 0 0 1-4.25 5.94 23.86 20.22 0 0 0 9.86-3.87 24.28 20.22 0 0 0 6.87.84 24.28 20.22 0 0 0 24.28-20.22 24.28 20.22 0 0 0-24.28-20.22z" fill="#fff"/></svg> Text Ava</a>
-    <p class="cta-sub">AI companion · iMessage · Free to start</p>
-  </section>
+    <!-- ============ CTA — edit SMS number below ============ -->
+    <section class="cta">
+      <a href="sms:+1XXXXXXXXXX" class="cta-btn"><svg viewBox="0 0 66.15 66.15" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ig" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#0cbd2a"/><stop offset="1" stop-color="#5bf675"/></linearGradient></defs><rect rx="14.57" width="66.15" height="66.15" fill="url(#ig)"/><path d="M33.07 11.45a24.28 20.22 0 0 0-24.28 20.22 24.28 20.22 0 0 0 11.8 17.32 27.37 20.22 0 0 1-4.25 5.94 23.86 20.22 0 0 0 9.86-3.87 24.28 20.22 0 0 0 6.87.84 24.28 20.22 0 0 0 24.28-20.22 24.28 20.22 0 0 0-24.28-20.22z" fill="#fff"/></svg> Text Ava</a>
+      <p class="cta-sub">AI companion · iMessage · Free to start</p>
+    </section>
+  </main>
 
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
