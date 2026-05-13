@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Subscribe - AvaTexts</title>
+  <meta name="description" content="Choose your AvaTexts plan. Start with a 7-day free trial.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0A0A0A;
+      --text-primary: #F5F5F5;
+      --text-secondary: #999999;
+      --text-muted: rgba(255,255,255,0.25);
+      --btn-bg: #FFFFFF;
+      --btn-text: #0A0A0A;
+      --footer-text: rgba(255,255,255,0.15);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 20px;
+      padding-top: max(48px, env(safe-area-inset-top));
+      padding-bottom: max(24px, env(safe-area-inset-bottom));
+      -webkit-tap-highlight-color: transparent;
+    }
+
+
+    /* ============ PAGE HEADER ============ */
+    .page-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .page-header h1 {
+      font-size: clamp(24px, 6vw, 32px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      text-shadow: 0 0 40px rgba(255,255,255,0.15), 0 0 80px rgba(255,255,255,0.05);
+    }
+
+    .page-header p {
+      font-size: clamp(14px, 3.5vw, 17px);
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    /* ============ TOGGLE ============ */
+    .toggle-wrap {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.08);
+      border-radius: 100px;
+      padding: 4px;
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    .toggle-btn {
+      position: relative;
+      z-index: 2;
+      padding: 10px 28px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.4);
+      background: none;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: color 0.3s;
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+    }
+
+    .toggle-btn.active {
+      color: #0A0A0A;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      top: 4px;
+      height: calc(100% - 8px);
+      background: #FFFFFF;
+      border-radius: 100px;
+      transition: left 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+                  width 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      z-index: 1;
+    }
+
+    .save-tag {
+      font-size: 10px;
+      font-weight: 700;
+      color: #4ADE80;
+      margin-left: 6px;
+      letter-spacing: 0.02em;
+    }
+
+    .toggle-btn.active .save-tag {
+      color: #16a34a;
+    }
+
+    /* ============ PLAN CARD ============ */
+    .plan-card-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 32px;
+    }
+
+    .plan-card {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      outline: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 40px rgba(255,255,255,0.1), 0 0 80px rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 28px 20px;
+      min-height: 420px;
+      background-color: #0A0A0A;
+      background-size: cover, cover, cover;
+      background-position: center, center, center;
+      text-align: center;
+      transition: background-image 0.3s;
+    }
+
+    .plan-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.85) 85%, rgba(0,0,0,0.95) 100%);
+      z-index: 1;
+    }
+
+    .plan-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 10%, rgba(10,10,10,0.75) 55%, rgba(10,10,10,1) 100%);
+      z-index: 2;
+    }
+
+    .plan-card > * {
+      position: relative;
+      z-index: 3;
+    }
+
+    /* Background images as separate layers for crossfade */
+    .card-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 0.4s ease;
+    }
+
+    .card-bg.bg-monthly {
+      background-image: url('../assets/images/sub1.png');
+    }
+
+    .card-bg.bg-annual {
+      background-image: url('../assets/images/sub2.png');
+    }
+
+    .card-bg.hidden {
+      opacity: 0;
+    }
+
+    /* ============ PRICE ============ */
+    .price {
+      font-size: clamp(40px, 10vw, 56px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 18px;
+      text-shadow: 0 0 30px rgba(255,255,255,0.2);
+      transition: opacity 0.25s, transform 0.25s;
+    }
+
+    .price-period {
+      font-size: 20px;
+      font-weight: 400;
+      opacity: 0.6;
+    }
+
+    .billed-text {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      margin-top: 10px;
+      min-height: 18px;
+    }
+
+    /* ============ CTA BUTTON ============ */
+    .plan-btn {
+      display: inline-block;
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      font-family: inherit;
+      font-size: 16px;
+      font-weight: 600;
+      padding: 14px 48px;
+      border-radius: 14px;
+      text-decoration: none;
+      letter-spacing: -0.01em;
+      transition: transform 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 0 20px rgba(255,255,255,0.25), 0 0 50px rgba(255,255,255,0.08);
+    }
+
+    .plan-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* ============ DISCLOSURE ============ */
+    .disclosure {
+      font-size: 11px;
+      color: rgba(255,255,255,0.2);
+      text-align: center;
+      max-width: 400px;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    /* ============ FOOTER ============ */
+    .footer {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      padding: 6px 16px;
+      margin-top: auto;
+    }
+
+    .footer a {
+      font-size: 10px;
+      color: var(--footer-text);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1>Choose your plan</h1>
+    <p>Start texting Ava with a 7-day free trial.</p>
+  </div>
+
+  <!-- TOGGLE -->
+  <div class="toggle-wrap">
+    <div class="toggle-slider" id="slider"></div>
+    <button class="toggle-btn active" id="btn-monthly" type="button">Monthly</button>
+    <button class="toggle-btn" id="btn-annual" type="button">Annual <span class="save-tag">SAVE 50%</span></button>
+  </div>
+
+  <!-- SINGLE CARD -->
+  <div class="plan-card-wrap">
+    <div class="plan-card">
+      <div class="card-bg bg-monthly" id="bg-monthly"></div>
+      <div class="card-bg bg-annual hidden" id="bg-annual"></div>
+      <div class="price" id="price">$19.99<span class="price-period">/mo</span></div>
+      <a href="https://buy.stripe.com/28EaEZ0Kg7W9aPi4AGa3u00" class="plan-btn" id="plan-btn">Start 7-Day Free Trial</a>
+      <p class="billed-text" id="billed-text">&nbsp;</p>
+    </div>
+  </div>
+
+  <p class="disclosure">This charge will appear as AVA DIGITAL on your statement. Cancel anytime by texting CANCEL.</p>
+
+  <footer class="footer">
+    <a href="/pages/faq.html">FAQ</a>
+    <a href="/pages/terms.html">Terms</a>
+    <a href="/pages/privacy.html">Privacy</a>
+  </footer>
+
+  <script>
+    (function() {
+      var btnMonthly = document.getElementById('btn-monthly');
+      var btnAnnual = document.getElementById('btn-annual');
+      var slider = document.getElementById('slider');
+      var price = document.getElementById('price');
+      var planBtn = document.getElementById('plan-btn');
+      var billedText = document.getElementById('billed-text');
+      var bgMonthly = document.getElementById('bg-monthly');
+      var bgAnnual = document.getElementById('bg-annual');
+
+      var isAnnual = false;
+
+      function moveSlider(btn) {
+        slider.style.left = btn.offsetLeft + 'px';
+        slider.style.width = btn.offsetWidth + 'px';
+      }
+
+      function update() {
+        var activeBtn = isAnnual ? btnAnnual : btnMonthly;
+        var inactiveBtn = isAnnual ? btnMonthly : btnAnnual;
+
+        activeBtn.classList.add('active');
+        inactiveBtn.classList.remove('active');
+        moveSlider(activeBtn);
+
+        if (isAnnual) {
+          price.innerHTML = '$9.99<span class="price-period">/mo</span>';
+          planBtn.href = 'https://buy.stripe.com/8x2cN79gM90d9Le1oua3u01';
+          billedText.textContent = 'Billed $119.88/year';
+          bgMonthly.classList.add('hidden');
+          bgAnnual.classList.remove('hidden');
+        } else {
+          price.innerHTML = '$19.99<span class="price-period">/mo</span>';
+          planBtn.href = 'https://buy.stripe.com/28EaEZ0Kg7W9aPi4AGa3u00';
+          billedText.innerHTML = '&nbsp;';
+          bgAnnual.classList.add('hidden');
+          bgMonthly.classList.remove('hidden');
+        }
+      }
+
+      btnMonthly.addEventListener('click', function() {
+        isAnnual = false;
+        update();
+      });
+
+      btnAnnual.addEventListener('click', function() {
+        isAnnual = true;
+        update();
+      });
+
+      // Initialize slider position after layout
+      moveSlider(btnMonthly);
+    })();
+  </script>
+
+</body>
+</html>
