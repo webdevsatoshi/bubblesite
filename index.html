@@ -361,7 +361,7 @@
 
     <!-- ============ CTA — edit SMS number below ============ -->
     <section class="cta">
-      <a href="sms:+1XXXXXXXXXX" class="cta-btn"><svg viewBox="0 0 66.15 66.15" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ig" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#0cbd2a"/><stop offset="1" stop-color="#5bf675"/></linearGradient></defs><rect rx="14.57" width="66.15" height="66.15" fill="url(#ig)"/><path d="M33.07 11.45a24.28 20.22 0 0 0-24.28 20.22 24.28 20.22 0 0 0 11.8 17.32 27.37 20.22 0 0 1-4.25 5.94 23.86 20.22 0 0 0 9.86-3.87 24.28 20.22 0 0 0 6.87.84 24.28 20.22 0 0 0 24.28-20.22 24.28 20.22 0 0 0-24.28-20.22z" fill="#fff"/></svg> Text Ava</a>
+      <a href="sms:+1XXXXXXXXXX" class="cta-btn" id="main-text-ava-cta"><svg viewBox="0 0 66.15 66.15" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ig" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#0cbd2a"/><stop offset="1" stop-color="#5bf675"/></linearGradient></defs><rect rx="14.57" width="66.15" height="66.15" fill="url(#ig)"/><path d="M33.07 11.45a24.28 20.22 0 0 0-24.28 20.22 24.28 20.22 0 0 0 11.8 17.32 27.37 20.22 0 0 1-4.25 5.94 23.86 20.22 0 0 0 9.86-3.87 24.28 20.22 0 0 0 6.87.84 24.28 20.22 0 0 0 24.28-20.22 24.28 20.22 0 0 0-24.28-20.22z" fill="#fff"/></svg> Text Ava</a>
       <p class="cta-sub">By continuing, you agree to our <a href="/pages/terms.html">Terms</a> and <a href="/pages/privacy.html">Privacy</a></p>
     </section>
   </main>
@@ -386,6 +386,36 @@
       }
       setVh();
       window.addEventListener('resize', setVh);
+
+      var mainCta = document.getElementById('main-text-ava-cta');
+      if (mainCta) {
+        mainCta.addEventListener('click', function(e) {
+          var destination = mainCta.getAttribute('href');
+          if (!destination) return;
+
+          e.preventDefault();
+
+          var hasRedirected = false;
+          function redirectToTextAva() {
+            if (hasRedirected) return;
+            hasRedirected = true;
+            window.location.href = destination;
+          }
+
+          if (typeof gtag === 'function') {
+            gtag('event', 'click_text_ava', {
+              event_category: 'funnel',
+              event_label: 'main_cta',
+              event_callback: redirectToTextAva,
+              event_timeout: 500
+            });
+
+            setTimeout(redirectToTextAva, 600);
+          } else {
+            redirectToTextAva();
+          }
+        });
+      }
 
       // ============================================================
       // SECTION B: CARD STACK INTERACTION
