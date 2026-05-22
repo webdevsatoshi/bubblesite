@@ -379,16 +379,16 @@
     <!-- ============ CTA — edit SMS number below ============ -->
     <section class="cta">
       <a href="sms:+1XXXXXXXXXX" class="cta-btn" id="main-text-ava-cta"><svg viewBox="0 0 66.15 66.15" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ig" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#0cbd2a"/><stop offset="1" stop-color="#5bf675"/></linearGradient></defs><rect rx="14.57" width="66.15" height="66.15" fill="url(#ig)"/><path d="M33.07 11.45a24.28 20.22 0 0 0-24.28 20.22 24.28 20.22 0 0 0 11.8 17.32 27.37 20.22 0 0 1-4.25 5.94 23.86 20.22 0 0 0 9.86-3.87 24.28 20.22 0 0 0 6.87.84 24.28 20.22 0 0 0 24.28-20.22 24.28 20.22 0 0 0-24.28-20.22z" fill="#fff"/></svg> Text Ava</a>
-      <p class="cta-sub">By continuing, you agree to our <a href="/pages/terms.html">Terms</a> and <a href="/pages/privacy.html">Privacy</a></p>
+      <p class="cta-sub">By continuing, you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy</a></p>
     </section>
   </main>
 
   <!-- ============ FOOTER ============ -->
   <footer class="footer">
     <a href="#" class="login-btn">Log In</a>
-    <a href="/pages/faq.html">FAQ</a>
-    <a href="/pages/terms.html">Terms</a>
-    <a href="/pages/privacy.html">Privacy</a>
+    <a href="/faq">FAQ</a>
+    <a href="/terms">Terms</a>
+    <a href="/privacy">Privacy</a>
   </footer>
 
   <script>
@@ -404,8 +404,89 @@
       setVh();
       window.addEventListener('resize', setVh);
 
+      var SMS_RECIPIENT = '+1XXXXXXXXXX';
+      var OPENER_ATTRIBUTION_CONFIG = {
+        m1: {
+          opener_text: 'hey ava!',
+          source: 'meta_ad_1',
+          campaign: 'meta_opener_test',
+          creative: 'm1_hey_ava',
+          audience: 'meta_audience_1'
+        },
+        m2: {
+          opener_text: 'hi ava!',
+          source: 'meta_ad_2',
+          campaign: 'meta_opener_test',
+          creative: 'm2_hi_ava',
+          audience: 'meta_audience_2'
+        },
+        m3: {
+          opener_text: 'is this ava?',
+          source: 'meta_ad_3',
+          campaign: 'meta_opener_test',
+          creative: 'm3_is_this_ava',
+          audience: 'meta_audience_3'
+        }
+      };
+
+      function normalizeAttributionKey(value) {
+        return (value || '').toLowerCase().replace(/^\/+|\/+$/g, '');
+      }
+
+      function getPathAttributionKey() {
+        var parts = window.location.pathname.split('/').filter(Boolean);
+        return normalizeAttributionKey(parts[0]);
+      }
+
+      function findConfiguredAttribution(key) {
+        key = normalizeAttributionKey(key);
+        if (!key) return null;
+        if (OPENER_ATTRIBUTION_CONFIG[key]) return OPENER_ATTRIBUTION_CONFIG[key];
+
+        for (var configKey in OPENER_ATTRIBUTION_CONFIG) {
+          if (OPENER_ATTRIBUTION_CONFIG[configKey].source === key) {
+            return OPENER_ATTRIBUTION_CONFIG[configKey];
+          }
+        }
+
+        return null;
+      }
+
+      function getConfiguredAttribution() {
+        var params = new URLSearchParams(window.location.search);
+        var keys = [
+          params.get('opener') ||
+          params.get('funnel') ||
+          params.get('variant') ||
+          params.get('lp') ||
+          null,
+          params.get('source') ||
+          params.get('utm_source') ||
+          null,
+          getPathAttributionKey()
+        ];
+
+        for (var i = 0; i < keys.length; i++) {
+          var attribution = findConfiguredAttribution(keys[i]);
+          if (attribution) return attribution;
+        }
+
+        return null;
+      }
+
+      function buildSmsHref(attribution) {
+        var href = 'sms:' + SMS_RECIPIENT;
+        if (attribution && attribution.opener_text) {
+          href += '?&body=' + encodeURIComponent(attribution.opener_text);
+        }
+        return href;
+      }
+
       var mainCta = document.getElementById('main-text-ava-cta');
       if (mainCta) {
+        var attribution = getConfiguredAttribution();
+        mainCta.setAttribute('href', buildSmsHref(attribution));
+
         mainCta.addEventListener('click', function(e) {
           var destination = mainCta.getAttribute('href');
           if (!destination) return;
