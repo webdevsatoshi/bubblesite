@@ -420,17 +420,20 @@
           }
 
           if (typeof fbq === 'function') {
-            fbq('track', 'Lead');
+            fbq('track', 'Lead', {
+              content_name: 'text_ava_click',
+              funnel_step: 'text_cta'
+            });
           }
 
           if (typeof gtag === 'function') {
             gtag('event', 'click_text_ava', {
-              event_category: 'funnel',
-              event_label: 'main_cta'
+              cta_location: 'hero',
+              destination: 'imessage'
             });
           }
 
-          setTimeout(redirectToTextAva, 500);
+          setTimeout(redirectToTextAva, 250);
         });
       }
 
