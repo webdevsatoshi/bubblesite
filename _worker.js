@@ -15,7 +15,7 @@ export default {
     if (assetPath) {
       const assetUrl = new URL(request.url);
       assetUrl.pathname = assetPath;
-      return env.ASSETS.fetch(new Request(assetUrl, request));
+      return env.ASSETS.fetch(new Request(assetUrl.toString(), request));
     }
 
     return env.ASSETS.fetch(request);
