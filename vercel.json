@@ -1,24 +1,10 @@
 {
+  "cleanUrls": true,
+  "trailingSlash": false,
   "rewrites": [
-    {
-      "source": "/subscribe",
-      "destination": "/subscribe/index.html"
-    },
     {
       "source": "/subscribe/:ref",
       "destination": "/subscribe/index.html"
-    },
-    {
-      "source": "/faq",
-      "destination": "/faq/index.html"
-    },
-    {
-      "source": "/privacy",
-      "destination": "/privacy/index.html"
-    },
-    {
-      "source": "/terms",
-      "destination": "/terms/index.html"
     }
   ]
 }
