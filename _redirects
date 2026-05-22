@@ -1,1 +1,5 @@
+/subscribe /subscribe/index.html 200
 /subscribe/* /subscribe/index.html 200
+/faq /faq/index.html 200
+/privacy /privacy/index.html 200
+/terms /terms/index.html 200

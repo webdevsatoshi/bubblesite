@@ -7,9 +7,22 @@
   <title>AvaTexts</title>
   <script>
     (function() {
-      var match = window.location.pathname.match(/^\/subscribe\/([A-Za-z0-9_-]+)\/?$/);
-      if (match) {
-        window.location.replace('/subscribe?ref=' + encodeURIComponent(match[1]));
+      var path = window.location.pathname.replace(/\/+$/, '');
+      var cleanRoutes = {
+        '/subscribe': '/subscribe/index.html',
+        '/faq': '/faq/index.html',
+        '/privacy': '/privacy/index.html',
+        '/terms': '/terms/index.html'
+      };
+      var subscribeRef = path.match(/^\/subscribe\/([A-Za-z0-9_-]+)$/);
+
+      if (subscribeRef) {
+        window.location.replace('/subscribe/index.html?ref=' + encodeURIComponent(subscribeRef[1]));
+        return;
+      }
+
+      if (cleanRoutes[path]) {
+        window.location.replace(cleanRoutes[path]);
         return;
       }
 
