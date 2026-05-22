@@ -9,15 +9,15 @@
     (function() {
       var path = window.location.pathname.replace(/\/+$/, '');
       var cleanRoutes = {
-        '/subscribe': '/subscribe.html',
-        '/faq': '/faq.html',
-        '/privacy': '/privacy.html',
-        '/terms': '/terms.html'
+        '/subscribe': '/subscribe/index.html',
+        '/faq': '/faq/index.html',
+        '/privacy': '/privacy/index.html',
+        '/terms': '/terms/index.html'
       };
       var subscribeRef = path.match(/^\/subscribe\/([A-Za-z0-9_-]+)$/);
 
       if (subscribeRef) {
-        window.location.replace('/subscribe.html?ref=' + encodeURIComponent(subscribeRef[1]));
+        window.location.replace('/subscribe/index.html?ref=' + encodeURIComponent(subscribeRef[1]));
         return;
       }
 

@@ -2,23 +2,23 @@
   "rewrites": [
     {
       "source": "/subscribe",
-      "destination": "/subscribe.html"
+      "destination": "/subscribe/index.html"
     },
     {
       "source": "/subscribe/:ref",
-      "destination": "/subscribe.html"
+      "destination": "/subscribe/index.html"
     },
     {
       "source": "/faq",
-      "destination": "/faq.html"
+      "destination": "/faq/index.html"
     },
     {
       "source": "/privacy",
-      "destination": "/privacy.html"
+      "destination": "/privacy/index.html"
     },
     {
       "source": "/terms",
-      "destination": "/terms.html"
+      "destination": "/terms/index.html"
     }
   ]
 }
