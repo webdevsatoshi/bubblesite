@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/subscribe/:ref",
+      "destination": "/subscribe/index.html"
+    }
+  ]
+}

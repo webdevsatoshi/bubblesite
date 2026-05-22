@@ -196,11 +196,11 @@
     }
 
     .card-bg.bg-monthly {
-      background-image: url('../assets/images/sub1.png');
+      background-image: url('/assets/images/sub1.png');
     }
 
     .card-bg.bg-annual {
-      background-image: url('../assets/images/sub2.png');
+      background-image: url('/assets/images/sub2.png');
     }
 
     .card-bg.hidden {
@@ -326,6 +326,33 @@
       var bgAnnual = document.getElementById('bg-annual');
 
       var isAnnual = false;
+      var monthlyStripeLink = 'https://buy.stripe.com/28EaEZ0Kg7W9aPi4AGa3u00';
+      var annualStripeLink = 'https://buy.stripe.com/8x2cN79gM90d9Le1oua3u01';
+      var safeRefPattern = /^[A-Za-z0-9_-]+$/;
+
+      function getReferralFromPath() {
+        var parts = window.location.pathname.split('/').filter(Boolean);
+        if (parts[0] !== 'subscribe' || !parts[1] || parts.length !== 2) return '';
+        return parts[1];
+      }
+
+      function getReferral() {
+        var ref = getReferralFromPath();
+        if (!ref) {
+          ref = new URLSearchParams(window.location.search).get('ref') || '';
+        }
+
+        return safeRefPattern.test(ref) ? ref : '';
+      }
+
+      function addClientReferenceId(stripeLink) {
+        var ref = getReferral();
+        if (!ref) return stripeLink;
+
+        var url = new URL(stripeLink);
+        url.searchParams.set('client_reference_id', ref);
+        return url.toString();
+      }
 
       function moveSlider(btn) {
         slider.style.left = btn.offsetLeft + 'px';
@@ -342,13 +369,13 @@
 
         if (isAnnual) {
           price.innerHTML = '$9.99<span class="price-period">/mo</span>';
-          planBtn.href = 'https://buy.stripe.com/8x2cN79gM90d9Le1oua3u01';
+          planBtn.href = addClientReferenceId(annualStripeLink);
           billedText.textContent = 'Billed $119.88/year';
           bgMonthly.classList.add('hidden');
           bgAnnual.classList.remove('hidden');
         } else {
           price.innerHTML = '$19.99<span class="price-period">/mo</span>';
-          planBtn.href = 'https://buy.stripe.com/28EaEZ0Kg7W9aPi4AGa3u00';
+          planBtn.href = addClientReferenceId(monthlyStripeLink);
           billedText.innerHTML = '&nbsp;';
           bgAnnual.classList.add('hidden');
           bgMonthly.classList.remove('hidden');
@@ -366,7 +393,7 @@
       });
 
       // Initialize slider position after layout
-      moveSlider(btnMonthly);
+      update();
     })();
   </script>
 
