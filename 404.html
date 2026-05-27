@@ -17,7 +17,7 @@
       var subscribeRef = path.match(/^\/subscribe\/([A-Za-z0-9_-]+)$/);
 
       if (subscribeRef) {
-        window.location.replace('/subscribe/index.html?ref=' + encodeURIComponent(subscribeRef[1]));
+        window.location.replace('/subscribe?ref=' + encodeURIComponent(subscribeRef[1]));
         return;
       }
 

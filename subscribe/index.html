@@ -338,7 +338,7 @@
 
       function getReferral() {
         var ref = getReferralFromPath();
-        if (!ref) {
+        if (!ref || !safeRefPattern.test(ref)) {
           ref = new URLSearchParams(window.location.search).get('ref') || '';
         }
 
